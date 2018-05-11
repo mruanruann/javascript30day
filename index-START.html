@@ -2,96 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JS + CSS Clock</title>
+  <title>Scoped CSS Variables and JS</title>
 </head>
 <body>
+  <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
 
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
 
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand">
-        </div>
-      </div>
-    </div>
+    <label for="blur">Blur:</label>
+    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
 
+    <label for="base">Base Color</label>
+    <input id="base" type="color" name="base" value="#ffc600">
+  </div>
+
+  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
-    html {
-      background:#018DED url(http://unsplash.it/1500/1000?image=881&blur=50);
-      background-size:cover;
-      font-family:'helvetica neue';
-      text-align: center;
-      font-size: 10px;
+
+    :root{
+      --spacing: 10px;
+      --blur: 10px;
+      --base: #ffc600;
     }
+
+    img{
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .hl{
+      color:var(--base);
+    }
+
+    /*
+      misc styles, nothing to do with CSS variables
+    */
 
     body {
-      margin: 0;
-      font-size: 2rem;
-      display:flex;
-      flex:1;
-      min-height: 100vh;
-      align-items: center;
+      text-align: center;
+      background: #193549;
+      color: white;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 50px;
     }
 
-    .clock {
-      width: 30rem;
-      height: 30rem;
-      border:20px solid white;
-      border-radius:50%;
-      margin:50px auto;
-      position: relative;
-      padding:2rem;
-      box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
-        inset 0 0 0 3px #EFEFEF,
-        inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
+    .controls {
+      margin-bottom: 50px;
     }
-
-    .clock-face {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
-    }
-
-    .hand {
-      width:50%;
-      height:6px;
-      background:black;
-      position: absolute;
-      top:50%;
-      transform-origin:100%;
-      transform: rotate(90deg);
-      transition: all 0.5s;
+    
+    input {
+      width:100px;
     }
 
   </style>
+ 
   <script>
+      //querySelectorAll will allow to select nodelist for all classes given
+      const inputs = document.querySelectorAll('.controls input');
 
-  const secondHand = document.querySelector('.second-hand');
-  const minHand = document.querySelector('.min-hand');
-  const hourHand = document.querySelector('.hour-hand');
-
-  function setDate(){
-    const now = new Date();
-    const seconds = now.getSeconds();
-    //console.log(seconds);
-    const secondsDegrees = ((seconds / 60) * 360) + 90;
-    secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
-    const mins = now.getMinutes();
-    const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6) + 90;
-    minHand.style.transform = `rotate(${minsDegrees}deg)`;
-    const hour = now.getHours();
-    const hourDegrees = ((hour/24)* 360) + 90;
-    console.log(hourDegrees);
-    hourHand.style.transform = `rotate(${hourDegrees}deg)`;
-
-  }
-  setInterval(setDate,1000);
-
+      function updater(){
+        const suffix = this.dataset.sizing || '';s
+        document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
+      }
+      //mouse move event capturing when changing the sliding bar
+      inputs.forEach(input => input.addEventListener('mousemove', updater));
+      //change event capturing when selecting the colour to change
+      inputs.forEach(input => input.addEventListener('change', updater));
   </script>
+
 </body>
 </html>
