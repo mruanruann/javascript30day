@@ -56,25 +56,44 @@
     .panel4 { background-image:url(https://source.unsplash.com/ITjiVXcwVng/1500x1500); }
     .panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
 
+    /*flex children - apply this style to all .panel*/
     .panel > * {
       margin:0;
       width: 100%;
       transition:transform 0.5s;
-      border: 1px solid red;
+      /*border: 1px solid red;*/
       flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
+    /* move the first flex child (upper grid) up by transform*/
+    .panel > p:first-child { transform: translateY(-100%);}
+    /* move the first flex child back to center when opened */
+    .panel.open-active > *:first-child {transform: translateY( 0 );}
+    /* move the first flex child (upper grid) up by transform*/
+    .panel > p:last-child { transform: translateY(+100%);}
+    /* move the first flex child back to center when opened */
+    .panel.open-active > *:last-child {transform: translateY( 0 );}
+
+
+    /*descendant selector - apply this style to all <p> class under class panel*/
     .panel p {
       text-transform: uppercase;
       font-family: 'Amatic SC', cursive;
       text-shadow:0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
       font-size: 2em;
     }
+
+    /*apply this style to the second <p> child under class panel*/
     .panel p:nth-child(2) {
       font-size: 4em;
     }
-
+    
+    /*apply this style when panel class transform to .open*/
     .panel.open {
+      flex: 5;
       font-size:40px;
     }
 
@@ -110,9 +129,23 @@
   </div>
 
   <script>
+    const panels = document.querySelectorAll('.panel');
+
+    function expand(){
+      this.classList.toggle('open');
+    }
+    
+    //e.propertyName will let you see what are the properties that is having 'transitionend' event
+    function enlarge(e){
+      if(e.propertyName.includes('flex')){
+        this.classList.toggle('open-active');
+      }
+    }
+
+    panels.forEach(panel => panel.addEventListener('click', expand));
+    panels.forEach(panel => panel.addEventListener('transitionend', enlarge));
 
   </script>
-
 
 
 </body>
